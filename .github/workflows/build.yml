@@ -1,0 +1,31 @@
+name: Build APK with Buildozer
+
+on:
+  push:
+    branches:
+      - main  # اجرای خودکار هنگام Push روی branch اصلی
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 کلون کردن مخزن
+      uses: actions/checkout@v3
+
+    - name: 🔧 نصب Buildozer و پیش‌نیازها
+      run: |
+        sudo apt update
+        sudo apt install -y python3-pip openjdk-17-jdk
+        pip install --upgrade Cython pip
+        pip install buildozer
+
+    - name: 📦 ساخت APK
+      run: buildozer -v android debug
+
+    - name: 🚀 آپلود خروجی APK به GitHub
+      uses: actions/upload-artifact@v3
+      with:
+        name: MyKivyApp-APK
+        path: bin/*.apk
+
