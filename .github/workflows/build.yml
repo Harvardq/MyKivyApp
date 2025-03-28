@@ -1,8 +1,35 @@
-- name: 🚀 آپلود خروجی APK به GitHub
-  uses: actions/upload-artifact@v2
-  with:
-    name: MyKivyApp-APK
-    path: bin/*.apk
+name: Build Kivy APK
 
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip
+          pip install --upgrade pip
+          pip install buildozer cython kivy python-for-android 
+
+      - name: Build APK
+        run: |
+          buildozer -v android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: Kivy-APK
+          path: bin/*.apk
 
 
